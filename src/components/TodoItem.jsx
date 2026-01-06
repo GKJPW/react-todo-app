@@ -1,32 +1,75 @@
 import React from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const TodoItem = ({ todo, toggleTodo, deleteTodo }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: todo.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
-    <li className="todo-item">
+    <li 
+      ref={setNodeRef}
+      style={style}
+      className={`todo-item ${isDragging ? 'dragging' : ''}`}
+    >
       <div className="todo-content">
+        <div className="drag-handle" {...attributes} {...listeners}>
+          <svg
+            className="drag-icon"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 8h16M4 16h16"
+            />
+          </svg>
+        </div>
+        
         <input
           type="checkbox"
           checked={todo.completed}
           onChange={() => toggleTodo(todo.id)}
           className="todo-checkbox"
         />
+        
         <span
           className={`todo-text ${todo.completed ? 'completed' : ''}`}
           onClick={() => toggleTodo(todo.id)}
         >
           {todo.text}
         </span>
-        {todo.priority && (
-          <span className={`priority-badge priority-${todo.priority}`}>
-            {todo.priority}
-          </span>
-        )}
-        {todo.category && (
-          <span className="category-badge">
-            {todo.category}
-          </span>
-        )}
+        
+        <div className="todo-meta">
+          {todo.priority && (
+            <span className={`priority-badge priority-${todo.priority}`}>
+              {todo.priority === 'high' ? '🔥' : todo.priority === 'medium' ? '⚡' : '🌱'} {todo.priority}
+            </span>
+          )}
+          {todo.category && (
+            <span className="category-badge">
+              #{todo.category}
+            </span>
+          )}
+        </div>
       </div>
+      
       <button
         onClick={() => deleteTodo(todo.id)}
         className="delete-btn"

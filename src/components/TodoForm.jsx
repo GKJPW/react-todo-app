@@ -16,34 +16,53 @@ const TodoForm = ({ addTodo }) => {
 
   return (
     <form onSubmit={handleSubmit} className="todo-form">
+      <div className="form-header">
+        <h3>Add New Task</h3>
+      </div>
       <div className="form-group">
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="What needs to be done?"
-          className="todo-input"
-          autoFocus
-        />
-        <input
-          type="text"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          placeholder="Category (optional)"
-          className="category-input"
-        />
-        <select
-          value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-          className="priority-select"
-        >
-          <option value="low">Low Priority</option>
-          <option value="medium">Medium Priority</option>
-          <option value="high">High Priority</option>
-        </select>
-        <button type="submit" className="add-btn">
-          Add Task
-        </button>
+        <div className="input-group">
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="What needs to be done?"
+            className="todo-input"
+            autoFocus
+          />
+          <button type="submit" className="add-btn">
+            <span className="add-icon">+</span>
+            Add
+          </button>
+        </div>
+        
+        <div className="form-options">
+          <div className="option-group">
+            <span className="option-label">Priority:</span>
+            <div className="priority-options">
+              {['low', 'medium', 'high'].map((level) => (
+                <button
+                  key={level}
+                  type="button"
+                  className={`priority-option ${priority === level ? 'active' : ''} ${level}`}
+                  onClick={() => setPriority(level)}
+                >
+                  {level === 'high' ? '🔥 High' : level === 'medium' ? '⚡ Medium' : '🌱 Low'}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="option-group">
+            <span className="option-label">Category:</span>
+            <input
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Work, Personal, Shopping..."
+              className="category-input"
+            />
+          </div>
+        </div>
       </div>
     </form>
   );
