@@ -1,9 +1,70 @@
 import React from 'react';
 
-const TodoItem = ({ todo, toggleTodo, deleteTodo }) => {
+const TodoItem = ({ 
+  todo, 
+  index,
+  toggleTodo, 
+  deleteTodo,
+  isDragging,
+  dragItemIndex,
+  dragOverIndex,
+  onDragStart,
+  onDragEnter,
+  onDragLeave,
+  onDragOver,
+  onDrop,
+  onDragEnd
+}) => {
+  const isBeingDragged = dragItemIndex === index;
+  const isDragOver = dragOverIndex === index && !isBeingDragged;
+
+  const handleDragStart = (e) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index);
+    onDragStart(index);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    onDragOver(e, index);
+  };
+
+  const handleDrop = () => {
+    onDrop(index);
+  };
+
   return (
-    <li className="todo-item">
+    <li 
+      className={`todo-item ${isBeingDragged ? 'dragging' : ''} ${isDragOver ? 'drag-over' : ''}`}
+      data-index={index}
+      draggable={true}
+      onDragStart={handleDragStart}
+      onDragEnter={() => onDragEnter(index)}
+      onDragLeave={onDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      onDragEnd={onDragEnd}
+    >
       <div className="todo-content">
+        <div className="drag-handle">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="9" cy="5" r="1"></circle>
+            <circle cx="9" cy="12" r="1"></circle>
+            <circle cx="9" cy="19" r="1"></circle>
+            <circle cx="15" cy="5" r="1"></circle>
+            <circle cx="15" cy="12" r="1"></circle>
+            <circle cx="15" cy="19" r="1"></circle>
+          </svg>
+        </div>
         <input
           type="checkbox"
           checked={todo.completed}

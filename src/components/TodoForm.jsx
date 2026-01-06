@@ -11,6 +11,7 @@ const TodoForm = ({ addTodo }) => {
       addTodo(text, priority, category);
       setText('');
       setCategory('');
+      setPriority('medium');
     }
   };
 
