@@ -31,13 +31,13 @@ const TodoForm = ({ addTodo }) => {
           />
           <button type="submit" className="add-btn">
             <span className="add-icon">+</span>
-            Add
+            Add Task
           </button>
         </div>
         
         <div className="form-options">
           <div className="option-group">
-            <span className="option-label">Priority:</span>
+            <span className="option-label">Priority Level:</span>
             <div className="priority-options">
               {['low', 'medium', 'high'].map((level) => (
                 <button
@@ -58,7 +58,7 @@ const TodoForm = ({ addTodo }) => {
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="Work, Personal, Shopping..."
+              placeholder="Work, Personal, Shopping, etc."
               className="category-input"
             />
           </div>

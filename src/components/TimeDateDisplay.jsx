@@ -15,27 +15,30 @@ const TimeDateDisplay = () => {
     return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true
+      second: '2-digit',
+      hour12: false
     });
   };
 
   const formatDate = (date) => {
     const options = { 
-      weekday: 'short', 
-      day: 'numeric', 
-      month: 'short' 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
     };
     return date.toLocaleDateString('en-US', options);
   };
 
   return (
     <div className="time-date-display">
-      <div className="time-display">
-        <span className="time-icon">🕒</span>
-        <span className="time-text">{formatTime(currentTime)}</span>
+      <div className="time-section">
+        <div className="time-label">Current Time</div>
+        <div className="time-value">{formatTime(currentTime)}</div>
       </div>
-      <div className="date-display">
-        {formatDate(currentTime)}
+      <div className="date-section">
+        <div className="date-label">Today's Date</div>
+        <div className="date-value">{formatDate(currentTime)}</div>
       </div>
     </div>
   );
