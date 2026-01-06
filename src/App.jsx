@@ -12,11 +12,23 @@ const App = () => {
     return savedTodos ? JSON.parse(savedTodos) : [];
   });
 
+  // Load theme from localStorage or default to light
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme || 'light';
+  });
+
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [dragItemIndex, setDragItemIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  // Apply theme class to body
+  useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   // Save todos to localStorage whenever they change
   useEffect(() => {
@@ -31,7 +43,7 @@ const App = () => {
       priority,
       category,
       createdAt: new Date().toISOString(),
-      order: todos.length // Add order property for sorting
+      order: todos.length
     };
     setTodos([...todos, newTodo]);
   };
@@ -52,11 +64,15 @@ const App = () => {
     }
   };
 
+  // Toggle theme between light and dark
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
+
   // Drag and drop functionality
   const handleDragStart = (index) => {
     setDragItemIndex(index);
     setIsDragging(true);
-    // Add a slight delay to ensure the drag image is captured correctly
     setTimeout(() => {
       const draggedElement = document.querySelector(`[data-index="${index}"]`);
       if (draggedElement) {
@@ -87,12 +103,9 @@ const App = () => {
     const newTodos = [...todos];
     const draggedTodo = newTodos[dragItemIndex];
     
-    // Remove the dragged item
     newTodos.splice(dragItemIndex, 1);
-    // Insert it at the new position
     newTodos.splice(dropIndex, 0, draggedTodo);
     
-    // Update order property
     const reorderedTodos = newTodos.map((todo, index) => ({
       ...todo,
       order: index
@@ -106,7 +119,6 @@ const App = () => {
     setIsDragging(false);
     setDragItemIndex(null);
     setDragOverIndex(null);
-    // Remove dragging class from all items
     document.querySelectorAll('.todo-item.dragging').forEach(el => {
       el.classList.remove('dragging');
     });
@@ -117,7 +129,6 @@ const App = () => {
 
   // Filter and search todos
   const filteredTodos = todos.filter(todo => {
-    // Filter by status
     if (filter === 'active') {
       if (todo.completed) return false;
     } else if (filter === 'completed') {
@@ -127,7 +138,6 @@ const App = () => {
       if (todo.category !== categoryFilter) return false;
     }
 
-    // Search by text
     if (searchQuery) {
       return todo.text.toLowerCase().includes(searchQuery.toLowerCase());
     }
@@ -135,13 +145,11 @@ const App = () => {
     return true;
   });
 
-  // Sort todos: by order property first, then by priority
+  // Sort todos
   const sortedTodos = [...filteredTodos].sort((a, b) => {
-    // First sort by order property
     if (a.order !== b.order) {
       return a.order - b.order;
     }
-    // Then by priority if order is the same
     const priorityOrder = { high: 3, medium: 2, low: 1 };
     return priorityOrder[b.priority] - priorityOrder[a.priority];
   });
@@ -180,12 +188,32 @@ const App = () => {
       <header className="app-header">
         <div className="header-content">
           <div className="header-text">
-            <h1 className="app-title">📝 Todo Master</h1>
+            <h1 className="app-title">📝 What to do?</h1>
             <p className="app-subtitle">Organize your tasks efficiently</p>
           </div>
-          <div className="date-time-display">
-            <div className="current-date">{formatDate(currentDateTime)}</div>
-            <div className="current-time">{formatTime(currentDateTime)}</div>
+          <div className="header-right">
+            <div className="date-time-display">
+              <div className="current-date">{formatDate(currentDateTime)}</div>
+              <div className="current-time">{formatTime(currentDateTime)}</div>
+            </div>
+            <button 
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            >
+              {theme === 'light' ? (
+                <svg className="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+              ) : (
+                <svg className="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+              )}
+              <span className="theme-text">
+                {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+              </span>
+            </button>
           </div>
         </div>
       </header>
@@ -227,7 +255,7 @@ const App = () => {
             </ul>
           ) : (
             <div className="empty-state">
-              <div className="empty-icon">📝</div>
+              <div className="empty-icon">{theme === 'light' ? '📝' : '✨'}</div>
               <h3>No Todos</h3>
               <p>{searchQuery || filter !== 'all' 
                 ? 'No tasks match your criteria' 
@@ -247,7 +275,7 @@ const App = () => {
       </main>
 
       <footer className="app-footer">
-        <p>Total Tasks: {todos.length} | Completed: {todos.filter(t => t.completed).length}</p>
+        <p>Total Tasks: {todos.length} | Completed: {todos.filter(t => t.completed).length} | Theme: {theme === 'light' ? '☀️ Light' : '🌙 Dark'}</p>
         <small>Your tasks are saved automatically</small>
       </footer>
     </div>

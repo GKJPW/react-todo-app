@@ -41,6 +41,7 @@ const TodoFilter = ({ filter, setFilter, searchQuery, setSearchQuery, categories
           <select
             onChange={(e) => setFilter(e.target.value === 'all-categories' ? 'all' : `category:${e.target.value}`)}
             className="category-filter"
+            value={filter.startsWith('category:') ? filter.split(':')[1] : 'all-categories'}
           >
             <option value="all-categories">All Categories</option>
             {categories.map((cat, index) => (
