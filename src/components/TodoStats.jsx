@@ -7,48 +7,34 @@ const TodoStats = ({ todos, clearAllTodos }) => {
 
   return (
     <div className="todo-stats">
-      <div className="stats-cards">
-        <div className="stat-card">
-          <div className="stat-icon">📋</div>
-          <div className="stat-content">
-            <div className="stat-value">{totalTodos}</div>
-            <div className="stat-label">Total</div>
-          </div>
+      <div className="stats-info">
+        <div className="stat-item">
+          <span className="stat-label">Total:</span>
+          <span className="stat-value">{totalTodos}</span>
         </div>
-        
-        <div className="stat-card">
-          <div className="stat-icon">✅</div>
-          <div className="stat-content">
-            <div className="stat-value">{completedTodos}</div>
-            <div className="stat-label">Done</div>
-          </div>
+        <div className="stat-item">
+          <span className="stat-label">Completed:</span>
+          <span className="stat-value">{completedTodos}</span>
         </div>
-        
-        <div className="stat-card">
-          <div className="stat-icon">⏳</div>
-          <div className="stat-content">
-            <div className="stat-value">{totalTodos - completedTodos}</div>
-            <div className="stat-label">Pending</div>
-          </div>
+        <div className="stat-item">
+          <span className="stat-label">Remaining:</span>
+          <span className="stat-value">{totalTodos - completedTodos}</span>
         </div>
       </div>
       
       <div className="progress-container">
-        <div className="progress-header">
-          <span>Progress</span>
-          <span>{progress}%</span>
-        </div>
         <div className="progress-bar">
           <div 
             className="progress-fill"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
+        <span className="progress-text">{progress}% Complete</span>
       </div>
       
       {totalTodos > 0 && (
         <button onClick={clearAllTodos} className="clear-all-btn">
-          🗑️ Clear All
+          Clear All Tasks
         </button>
       )}
     </div>
